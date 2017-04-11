@@ -1,0 +1,22 @@
+extends layout
+block content
+	div.container-fluid.text-center
+		//h3.text-danger Почему API выдает список не отсортированым по дате?
+		table.table.table-condensed
+			tr
+				th Высота
+				th Дата
+				th Генератор
+				th Генерирующий баланс
+				th Сбор
+
+			-each item in data
+				tr
+					td=item.height
+					-var date = new Date(item.timestamp)
+					-var dateF =  date.toLocaleDateString() + ' ' + date.toTimeString()
+					td=dateF
+					td=item.creator
+					td #{item.generatingBalance}  #{item.winValueTargeted}
+					td=item.fee
+

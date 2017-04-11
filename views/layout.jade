@@ -1,0 +1,37 @@
+include mixins/navbar.jade
+doctype html
+html
+	head
+		link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/style.css')
+		script(src='https://code.jquery.com/jquery-3.1.1.min.js')
+		//script(src='/js/custom.js')
+		//link(rel="stylesheet" href='/css/bootstrap-theme.min.css')
+		script(src='/js/bootstrap.min.js')
+		-var menuItems = []
+		//-menuItems.push(['/wallet/new','Новый кошелёк'])
+		//-menuItems.push(['/wallet/open','Открыть кошелёк'])
+		//-menuItems.push(['/wallet/restore','Восстановить кошелёк'])
+		-menuItems.push(['/wallet/blocks','Блоки'])
+		//-menuItems.push(['/wallet/unlock','UNLOCK'])
+		-if(auth)
+			-menuItems.push(['/wallet/cabinet','Кабинет'])
+		-var title = ""
+		each item in menuItems
+			-if(item[0]==route)
+				-title = item[1]
+		title= title
+	body
+		div.container
+			+nav("Aronicle", "dropdown_menu")
+				each item in menuItems
+					-if(item[0]==route)
+						-var classItem = 'active'
+					-else
+						-var classItem = ''
+					+nav_item( item[0] ,classItem) #{item[1]}
+
+			h1.text-center= title
+			if flash
+				div(role="alert").alert.alert-danger #{flash}
+			block content

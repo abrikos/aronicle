@@ -1,0 +1,10 @@
+extends layout
+block content
+	div=data
+	div.site-dialog-wrap
+		form(method="post").site-dialog-container.center-block
+			div.form-group
+				label.form-control-label(for="password") Введите сложный пароль (не менее 9 символов)
+				input#password.form-control(name="password", value='bbbb737gdh4hf', placeholder="Не забудьте сохранить это!")
+			div.form-group
+				input(type="submit", value="Создать кошелёк").btn.btn-primary

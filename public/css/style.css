@@ -1,0 +1,23 @@
+.site-dialog-wrap .site-dialog-container {
+  background-color: whitesmoke;
+  width: 550px;
+  padding: 20px; }
+  @media screen and (max-width: 500px) {
+    .site-dialog-wrap .site-dialog-container {
+      width: 100%; } }
+
+#dash-menu .btn-dash-menu {
+  padding: 10px;
+  width: 100%;
+  border-bottom: 1px solid blue; }
+
+#dash-work table {
+  font-size: 0.7em; }
+
+.row :nth-child(even) {
+  background-color: #dcdcdc; }
+
+.row :nth-child(odd) {
+  background-color: #aaaaaa; }
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,46 @@
+extends layout
+block content
+	script( src="/js/nacl-fast.js" charset="utf-8")
+	script( src="/js/Base58.js" charset="utf-8")
+	script( src="/js/sha256.js" charset="utf-8")
+	script( src="/js/ripemd160.js" charset="utf-8")
+	script( src="/js/seeds.js" charset="utf-8")
+	script( src="/js/qora.js" charset="utf-8")
+
+
+	div.row
+		div.col-sm-6
+			form
+				div.form-group
+						label(for="brainWalletPassphrase") Passphrase:
+						input#brainWalletPassphrase.form-control(autofocus=true)
+						input#doBrainButton.btn.btn-default(type="button"  OnClick="doBrain()" value="Convert")
+				div.form-group
+					label(for="base58BaseSeed") Base Seed:
+					input#base58BaseSeed.form-control
+					input.btn.btn-default(type="button" value="Сonvert" OnClick="doAccounts()")
+				div.form-group
+					label(for="countAddrs") Count:
+					input#countAddrs.form-control(value="10")
+
+			form
+				h3 Account:
+				div.form-group
+					label Seed:
+					input#base58AccountSeed.form-control
+					input#doAccountFromSeedButton.btn.btn-default(type="button"  value="Сonvert" OnClick="doAccountFromSeed()")
+
+				div.form-group
+					label privateKey:
+					input#base58AccountPrivateKey.form-control(readonly)
+
+				div.form-group
+					label publicKey:
+					input#base58AccountPublicKey.form-control
+					input.btn.btn-default(type="button" value="Сonvert" OnClick="doAccountAddressFromPublicKey()")
+
+				div.form-group
+					label Address:
+					input#base58AccountAddress.form-control(readonly)
+
+		div#output.col-sm-6

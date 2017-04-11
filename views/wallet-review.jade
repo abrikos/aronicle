@@ -1,0 +1,45 @@
+extends layout
+block content
+	div.container-fluid
+		div.row
+			div.col-md-2#dash-menu
+				div.btn-dash-menu: a(href="/wallet/review") Обзор
+				div.btn-dash-menu: a(href="/wallet/status") Статус
+				div.btn-dash-menu: a(href="/wallet/names") Персоны
+				div.btn-dash-menu: a(href="/wallet/addresses-new") Новый адрес
+				div.btn-dash-menu: a(href="/wallet/seed") Seed
+
+			div.col-md-10#dash-work
+				div=action
+				div=data
+				-if(action == "names")
+					-each item in data
+						div=item
+				-else if(action == "new")
+					div=data
+				-else
+					h3 Пиры
+					table.table.table-condensed
+						tbody#peers
+					h3 Мои сгенерированные блоки
+					table.table.table-condensed
+						tr
+							th Высота
+							th Дата
+							th Генератор
+							th Генерирующий баланс
+							th Сбор
+						tbody#blocks
+
+					h3 Мои транзакции
+					table.table.table-condensed
+						tr
+							th Тип
+							th Создатель
+							th Item
+							th Количество
+							th Получатель
+							th Описание
+						tbody#transactions
+
+					script $(function(){getPeers(); getMyTransactions(); getMyBlocks()});

@@ -1,0 +1,11 @@
+extends layout
+block content
+	div=data
+	div.site-dialog-wrap
+		form(method="post").site-dialog-container.center-block
+			div.form-group
+				label.form-control-label(for="seed") Seed (если есть)
+				input#seed.form-control(name="seed",  placeholder="Введите Ваш seed")
+
+			div.form-group
+				input(type="submit", value="Создать кошелёк").btn.btn-primary

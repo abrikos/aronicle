@@ -1,0 +1,14 @@
+extends layout
+block content
+	div=data
+	div.site-dialog-wrap
+		form(method="post", enctype="multipart/form-data").site-dialog-container.center-block
+			div.form-group
+				label.form-control-label(for="json-file") Файл ключа
+				input#json-file(name="jsonfile", type="file")
+			div.form-group
+				label.form-control-label(for="password") Пароль
+				input#password.form-control(name="password", value='bbbb737gdh4hf', placeholder="Не забудьте сохранить это!")
+
+			div.form-group
+				input(type="submit", value="Открыть кошелёк").btn.btn-primary

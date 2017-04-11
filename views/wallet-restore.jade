@@ -1,0 +1,14 @@
+extends layout
+block content
+	div=data
+	div.site-dialog-wrap
+		form(method="post").site-dialog-container.center-block
+			div.form-group
+				label.form-control-label(for="password") Ваш пароль
+				input#password.form-control(name="password", value='bbbb737gdh4hf', placeholder="Не забудьте сохранить это!")
+			div.form-group
+				label.form-control-label(for="seed") Ваш Seed
+				input#seed.form-control(name="seed",  placeholder="Введите Ваш seed")
+
+			div.form-group
+				input(type="submit", value="Восстановить кошелёк").btn.btn-primary
