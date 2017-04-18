@@ -8,7 +8,6 @@ module.exports = {
 		var cmd = '/lightwallet/getraw/31/'+pubKey+'?feePow=2&recipient='+recipient+'&amount='+amount+'&key=1';
 		//Отсылаем на сервер запрос на создание транзакции
 		http.getErmData('GET',cmd,null,function (message) {
-			return cb(message)
 			var byteMessage = bs58.decode(message)
 			var signature = ed25519.Sign(byteMessage, bs58.decode(secretKey));
 			var slice1 = byteMessage.slice(0,53)
