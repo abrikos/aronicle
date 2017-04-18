@@ -1,21 +1,23 @@
-//let fs = require('fs');
-let log   = require('../libs/log')(module);
-let Wallet  = require('../models/WalletModel');
-let request = require("request");
-let uuid = require("uuid");
-
-//let ACTIONS = JSON.parse(fs.readFileSync(__dirname + '/../libs/actions.json', 'utf8'));
-
+var log   = require('../libs/log')(module);
+var http   = require('../libs/http');
+var Walvar  = require('../models/WalletModel');
+var request = require("request");
+var crypto = require("crypto");
+var uuid = require("uuid");
+var ed25519 = require('ed25519');
+var bs58 = require('bs58')
+var nacl = require('tweetnacl')
 
 module.exports.controller = function(app) {
+
 /*
 	app.get('/wallet/open',function (req,res) {
-		let flash = req.flash();
+		var flash = req.flash();
 		res.render('wallet-open',{route:req.url, flash:flash.error ? flash.error[0] : '', auth:req.session.wallet_id});
 	});
 
 	app.get('/wallet/restore',function (req, res, next) {
-		let flash = req.flash();
+		var flash = req.flash();
 		res.render('wallet-restore',{route:req.url, flash:flash.error ? flash.error[0] : '', auth:req.session.wallet_id});
 	});
 
@@ -27,7 +29,7 @@ module.exports.controller = function(app) {
 
 	app.get('/wallet/unlock',function (req, res, next) {
 		"use strict";
-		let cmd;
+		var cmd;
 		//cmd = '/payment?feePow=0&assetKey=2&sender=7F9cZPE1hbzMT21g96U8E1EfMimovJyyJ7&recipient=7JU8UTuREAJG2yht5ASn7o1Ur34P1nvTk5&amount=0.1&password=123456789011'
 		cmd = '/wallet';
 		getErmData('GET',cmd,{seed:"",password:"",recover:false,amount:1},function (data) {
@@ -36,10 +38,10 @@ module.exports.controller = function(app) {
 	});
 
 	app.post('/wallet/open',function (req,res,next) {
-		let fs = require('fs');
-		let password = req.body.password;
-		let jsonfile = require('jsonfile');
-		let filePath = '/tmp/' + uuid.v4();
+		var fs = require('fs');
+		var password = req.body.password;
+		var jsonfile = require('jsonfile');
+		var filePath = '/tmp/' + uuid.v4();
 		req.files.jsonfile.mv(filePath, function(err) {
 			if (err)
 				return next(new Error(err.message));
@@ -110,7 +112,7 @@ module.exports.controller = function(app) {
 			res.setHeader('Content-disposition', 'attachment; filename=aronicle.json');
 			res.setHeader('Content-type', 'text/json');
 			res.charset = 'UTF-8';
-			let data = JSON.stringify({
+			var data = JSON.stringify({
 				seed:wallet.seed,
 				openkey:wallet.openkey,
 				privatekey:wallet.privatekey
@@ -121,8 +123,8 @@ module.exports.controller = function(app) {
 	});
 
 	app.post('/wallet/new',function (req, res,next) {
-		let base58 = require('base58');
-		let postData = {
+		var base58 = require('base58');
+		var postData = {
 			seed:req.body.seed,
 			password:req.body.password,
 			recover:false,
@@ -140,7 +142,7 @@ module.exports.controller = function(app) {
 				if (wallet) {
 					return next(new Error('Кошелек уже создан'));
 				} else {
-					let newWallet            = new Wallet();
+					var newWalvar            = new Wallet();
 					newWallet.seed = postData.seed;
 					newWallet.privatekey = uuid.v4();
 					newWallet.openkey = uuid.v4();
@@ -157,7 +159,7 @@ module.exports.controller = function(app) {
 						newWallet.save(function (err) {
 							if (err)
 								throw err
-							log.info('Wallet saved: ', newWallet.id)
+							log.info('Walvar saved: ', newWallet.id)
 							req.session.wallet_id = newWallet.id;
 							req.session.save(function (err) {
 								if (err) {
@@ -176,6 +178,7 @@ module.exports.controller = function(app) {
 		})
 	});
 */
+
 	app.get('/wallet/blocks',function (req,res) {
 		getErmData('GET','/blocks/height',{},function (data) {
 			var height = data - 100;
@@ -185,37 +188,33 @@ module.exports.controller = function(app) {
 		})
 	});
 
-	//Send to ERM API
-	let getErmData = function (method, path, postData, callBack) {
-		let querystring = require('querystring');
-		let data = querystring.stringify(postData);
-		let options = {
-			host: 'localhost',
-			port: 9048,
-			path: path,
-			method: method,
-			headers: {
-				//'Content-Length': Buffer.byteLength(data)
-			}
-		};
-		let http = require("http");
-		let httpRequest = http.request(options, function(res) {
-			res.on('data', function (chunk) {
-				log.info('getErm:', chunk.toString())
-				callBack(JSON.parse(chunk.toString()));
 
-			});
-			res.on('error',function (err) {
-				log.error('HttpRequest ERROR: ' + err);
-			})
-		});
-		httpRequest.write(data);
-		httpRequest.end();
+	var pub = 'GJPyYyPA89cXeue6F6eUN4VyDjKtLckRDsqZYAy2BxuK';
+	var prv = '54XtxGCDFxGLbnfnPWNbfe3ap9CApXsJUmcmDFAujGmqoSPZtnX7jg5snhyotg2c7BE2awbeFeJqrSUAv7UB5zyb';
+	var aliceSeed = crypto.randomBytes(32);
+	var aliceKeypair = ed25519.MakeKeypair(aliceSeed);
 
-	}
+	cmd = '/lightwallet/getraw/31/'+bs58.encode(aliceKeypair.publicKey)+'?feePow=2&recipient=77QnJnSbS9EeGBa2LPZFZKVwjPwzeAxjmy&amount=123.0000123&key=1'
 
-	//Check if the Wallet authenticated and add permissions to next
-	function authenticateWallet (req, res, next) {
+	http.getErmData('GET',cmd,null,function (message) {
+		var byteMessage = new Buffer(message, 'utf8')
+		console.log(byteMessage)
+		var signature = ed25519.Sign(byteMessage, aliceKeypair.privateKey);
+		console.log(signature)
+		cmd = '/lightwallet/parse?data='+bs58.encode(signature)
+		console.log(cmd)
+		http.getErmData('GET',cmd,'',function (data) {
+			console.log(data);
+		})
+
+	});
+
+
+
+
+
+	//Check if the Walvar authenticated and add permissions to next
+	function authenticateWalvar (req, res, next) {
 		log.info(req.session)
 		Wallet.findById(req.session.wallet_id,function (err,wallet) {
 			"use strict";
