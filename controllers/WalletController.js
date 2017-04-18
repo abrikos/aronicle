@@ -12,15 +12,6 @@ module.exports.controller = function(app) {
 
 
 
-	app.get('/wallet/blocks',function (req,res) {
-		getErmData('GET','/blocks/height',{},function (data) {
-			var height = data - 100;
-			getErmData('GET','/blocks/fromheight/'+height,{},function (data) {
-				res.render('wallet-blocks', {data: data.reverse(), route: req.url, auth: req.session.wallet_id ? true : false})
-			});
-		})
-	});
-
 
 	var pub = 'GJPyYyPA89cXeue6F6eUN4VyDjKtLckRDsqZYAy2BxuK';
 	var prv = '54XtxGCDFxGLbnfnPWNbfe3ap9CApXsJUmcmDFAujGmqoSPZtnX7jg5snhyotg2c7BE2awbeFeJqrSUAv7UB5zyb';
@@ -47,6 +38,16 @@ module.exports.controller = function(app) {
 			console.log(data);
 		})
 
+	});
+
+
+	app.get('/wallet/blocks',function (req,res) {
+		getErmData('GET','/blocks/height',{},function (data) {
+			var height = data - 100;
+			getErmData('GET','/blocks/fromheight/'+height,{},function (data) {
+				res.render('wallet-blocks', {data: data.reverse(), route: req.url, auth: req.session.wallet_id ? true : false})
+			});
+		})
 	});
 
 	/*
