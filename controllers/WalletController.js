@@ -191,26 +191,30 @@ module.exports.controller = function(app) {
 
 	var pub = 'GJPyYyPA89cXeue6F6eUN4VyDjKtLckRDsqZYAy2BxuK';
 	var prv = '54XtxGCDFxGLbnfnPWNbfe3ap9CApXsJUmcmDFAujGmqoSPZtnX7jg5snhyotg2c7BE2awbeFeJqrSUAv7UB5zyb';
-	var aliceSeed = crypto.randomBytes(32);
-	var aliceKeypair = ed25519.MakeKeypair(aliceSeed);
+	//var aliceSeed = crypto.randomBytes(32);
+	//var aliceKeypair = ed25519.MakeKeypair(aliceSeed);
 
-	cmd = '/lightwallet/getraw/31/'+bs58.encode(aliceKeypair.publicKey)+'?feePow=2&recipient=77QnJnSbS9EeGBa2LPZFZKVwjPwzeAxjmy&amount=123.0000123&key=1'
+	//var cmd =
+	// '/lightwallet/getraw/31/'+bs58.encode(aliceKeypair.publicKey)+'?feePow=2&recipient=77QnJnSbS9EeGBa2LPZF dfd df df  fdfdf dfgf f'
+	var cmd = '/lightwallet/getraw/31/'+pub+'?feePow=2&recipient=77QnJnSbS9EeGBa2LPZFZKVwjPwzeAxjmy&amount=123.0000123&key=1'
 
 	http.getErmData('GET',cmd,null,function (message) {
-		var byteMessage = new Buffer(message, 'utf8')
+		var byteMessage = bs58.decode(message)
+		var signature = ed25519.Sign(byteMessage, bs58.decode(prv));
+		var b1 = byteMessage.slice(0,53)
+		var b2 = byteMessage.slice(53,byteMessage.length)
+		var readyMessage = Buffer.concat([b1,signature, b2]);
+
 		console.log(byteMessage)
-		var signature = ed25519.Sign(byteMessage, aliceKeypair.privateKey);
+
 		console.log(signature)
-		cmd = '/lightwallet/parse?data='+bs58.encode(signature)
+		cmd = '/lightwallet/parse?data='+bs58.encode(readyMessage)
 		console.log(cmd)
 		http.getErmData('GET',cmd,'',function (data) {
 			console.log(data);
 		})
 
 	});
-
-
-
 
 
 	//Check if the Walvar authenticated and add permissions to next
